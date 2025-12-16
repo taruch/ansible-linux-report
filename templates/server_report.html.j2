@@ -33,7 +33,8 @@
 <body>
 
     <h1>Server Information Report</h1>
-    <p>Generated on: {{ ansible_date_time.date }} at {{ ansible_date_time.time }}</p>
+    {# Access local facts via ansible_facts dictionary #}
+    <p>Generated on: {{ ansible_facts['date_time']['date'] }} at {{ ansible_facts['date_time']['time'] }}</p>
 
     <table>
         <thead>
@@ -45,14 +46,23 @@
             </tr>
         </thead>
         <tbody>
-            {# Loop through all hosts in the play #}
             {% for host in groups['all'] %}
-            <tr>
-                <td>{{ hostvars[host]['ansible_hostname'] }}</td>
-                <td>{{ hostvars[host]['ansible_os_family'] }}</td>
-                <td>{{ hostvars[host]['ansible_distribution_version'] }}</td>
-                <td>{{ hostvars[host]['ansible_default_ipv4']['address'] | default('N/A') }}</td>
-            </tr>
+            {# Check if facts exist for the host to avoid errors on failed hosts #}
+            {% if hostvars[host]['ansible_facts'] is defined %}
+                {% set facts = hostvars[host]['ansible_facts'] %}
+                <tr>
+                    <td>{{ facts['hostname'] }}</td>
+                    <td>{{ facts['os_family'] }}</td>
+                    <td>{{ facts['distribution_version'] }}</td>
+                    {# Use bracket notation for nested items to be safe #}
+                    <td>{{ facts['default_ipv4']['address'] | default('N/A') }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td>{{ host }}</td>
+                    <td colspan="3">Facts not gathered (Host unreachable?)</td>
+                </tr>
+            {% endif %}
             {% endfor %}
         </tbody>
     </table>
