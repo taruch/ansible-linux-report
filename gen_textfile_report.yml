@@ -1,0 +1,26 @@
+---
+- name: Gather Facts from Inventory
+  hosts: all
+  gather_facts: yes
+  ignore_unreachable: yes  # Ensures the report runs even if a node is down
+  tasks: []
+
+- name: Generate Text Report
+  hosts: localhost
+  connection: local
+  gather_facts: yes        # Needed for the timestamp
+  tasks:
+    - name: Render Text report
+      template:
+        src: server_report.txt.j2
+        dest: ./server_report.txt
+      run_once: true
+
+    - name: Display report in console
+      command: cat ./server_report.txt
+      register: report_output
+      changed_when: false
+
+    - name: Print report
+      debug:
+        var: report_output.stdout_lines

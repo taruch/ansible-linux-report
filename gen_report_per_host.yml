@@ -1,0 +1,24 @@
+---
+- hosts: all
+  gather_facts: true
+  remote_user: truch
+
+  tasks:
+
+    - name: Display all key facts in a single grouped output
+      ansible.builtin.set_fact:
+        system_summary: |
+          System Information Summary:
+          ---------------------------
+          Hostname:                 {{ ansible_facts['hostname'] }}
+          OS Family:                {{ ansible_facts['os_family'] }}
+          Distribution Version:     {{ ansible_facts['distribution_version'] }}
+          Default IPv4 Address:     {{ ansible_facts['default_ipv4']['address'] }}
+
+    - name: Write the system summary content to a local file using the 'copy' module
+      # Note: 'delegate_to: localhost' runs this specific task on your Ansible controller
+      ansible.builtin.copy:
+        content: "{{ system_summary }}"
+        dest: "/tmp/files/{{ ansible_facts['hostname'] }}_summary.txt"
+      delegate_to: localhost
+      run_once: true # Optional: only run once if targeting multiple hosts to avoid race conditions on the local file system
