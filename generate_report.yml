@@ -1,0 +1,16 @@
+---
+- name: Gather facts from all servers
+  hosts: all
+  gather_facts: yes
+  # No tasks here, just gathering facts so hostvars are populated
+
+- name: Generate HTML Report
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  tasks:
+    - name: Create the HTML report from the template
+      ansible.builtin.template:
+        src: server_report.html.j2
+        dest: ./server_report.html
+      run_once: true

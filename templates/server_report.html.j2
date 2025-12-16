@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ansible Server Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Server Information Report</h1>
+    <p>Generated on: {{ ansible_date_time.date }} at {{ ansible_date_time.time }}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Hostname</th>
+                <th>OS Family</th>
+                <th>Distribution Version</th>
+                <th>Default IPv4 Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            {# Loop through all hosts in the play #}
+            {% for host in groups['all'] %}
+            <tr>
+                <td>{{ hostvars[host]['ansible_hostname'] }}</td>
+                <td>{{ hostvars[host]['ansible_os_family'] }}</td>
+                <td>{{ hostvars[host]['ansible_distribution_version'] }}</td>
+                <td>{{ hostvars[host]['ansible_default_ipv4']['address'] | default('N/A') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
