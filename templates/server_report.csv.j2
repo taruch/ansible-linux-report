@@ -1,0 +1,7 @@
+HOSTNAME,OS_FAMILY,VERSION,IP_ADDRESS
+{% for host in groups['all'] %}
+{% if hostvars[host].ansible_facts is defined %}
+{% set facts = hostvars[host].ansible_facts %}
+{{ facts.fqdn | default(host) }},{{ facts.os_family | default('N/A') }},{{ facts.distribution_version | default('N/A') }},{{ facts.default_ipv4.address | default('N/A', true) }}
+{% endif %}
+{% endfor %}

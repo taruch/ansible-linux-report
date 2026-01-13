@@ -6,7 +6,7 @@ Generated: {{ ansible_facts['date_time']['iso8601'] }}
 {% for host in groups['all'] %}
 {% if hostvars[host]['ansible_facts'] is defined %}
 {% set facts = hostvars[host]['ansible_facts'] %}
-{{ "%-20s" | format(facts['hostname']) }} {{ "%-15s" | format(facts['os_family']) }} {{ "%-15s" | format(facts['distribution_version']) }} {{ "%-18s" | format(facts['default_ipv4']['address'] | default('N/A')) }}
+{{ "%-20s" | format(facts['fqdn']) }} {{ "%-15s" | format(facts['os_family']) }} {{ "%-15s" | format(facts['distribution_version']) }} {{ "%-18s" | format(facts['default_ipv4']['address'] | default('N/A')) }}
 {% else %}
 {{ "%-20s" | format(host) }} {{ "%-50s" | format("UNREACHABLE / OFFLINE") }}
 {% endif %}

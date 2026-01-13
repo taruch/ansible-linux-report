@@ -24,3 +24,6 @@
     - name: Print report
       debug:
         var: report_output.stdout_lines
+
+    - name: Copy file to remote hosts
+    

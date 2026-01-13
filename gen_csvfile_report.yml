@@ -1,0 +1,23 @@
+---
+- name: Gather Facts from Inventory
+  hosts: all
+  gather_facts: yes
+  # ignore_unreachable: yes  # Ensures the report runs even if a node is down
+  ignore_unreachable: no
+  tasks: []
+
+- name: Generate CSV Report
+  hosts: "{{ report_server }}"
+  gather_facts: yes        # Needed for the timestamp
+  vars:
+  tasks:
+    - name: Render CSV report
+      ansible.builtin.template:
+        src: server_report.csv.j2
+        dest: /tmp/server_report.csv
+      run_once: true
+
+    - name: Display report in console
+      ansible.builtin.command: cat /tmp/server_report.csv
+      register: report_output
+      changed_when: false
